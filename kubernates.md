@@ -1,6 +1,6 @@
 # Kubernates
 
-## Questions
+### Questions
 - What is Kubernates?
 - What are the components of Kubernates?
 - What is Deployment?
