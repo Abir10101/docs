@@ -1,54 +1,52 @@
-Setup a secure vpc network for application and db deployment
+# Setup a secure vpc for application and database deployment
 
-create vpc
-1. vpc name myvpc
-2. vpc ip range 10.0.0.0/16
+### Step 1: Create a vpc
+- name: `myvpc`
+- cidr: `10.0.0.0/16`
+<br>
+<br>
 
-create subnets
-1. choose vpc in which subnet will create myvpc
-2. cidr range within the range of vpc ips 10.0.1.0/24
-3. two subnets ip range must not overlap with each other 10.0.2.0/24
+### Step 2: Create public and private subnets
+- vpc_id: `myvpc`
+- name: `pubsn`
+- cidr: `10.0.1.0/24`  
+<ins> add another sn </ins>
+- name: `prisn`
+- cidr: `10.0.2.0/24`
 
-create internet gateway
-1. gateway name myigw
-2. atach myigw with vpc myvpc
+Note: two subnets ip range must not overlap with each other.
+<br>
+<br>
 
-create route table
-1. route table name pubrt
-2. add routes any ip address( 0.0.0.0/0 ) request will forward to internet gateway myigw
-3. add another route table prirt. subnet association prisn.
+### Step 3: Create Internet Gateway
+- name: `myigw`
+- attach: `myvpc`
 
-spin ec2 machine. machine in prisn cannot connect thorugh ssh. machine in pubsn can connect trough ssh
+Note: This will allow public subnet to have internet access (incoming and outgoing).
+<br>
+<br>
 
-create private db
+### Step 4: Create Route Table
+- name: `pubrt`
+- add route: `0.0.0.0/0    myigw`
+- subnet association: `pubsn`  
+<ins> add another rt </ins>
+- name: `prirt`
+- subnet association: `prisn`
 
-create vpc
-1. name: myvpc
-2. cidr: 10.0.0.0/16
-
-create subnets
-1. vpc: myvpc
-2. name: sn1
-3. cidr: 10.0.1.0/24
-another subnet
-4. name: sn2
-5. cidr: 10.0.2.0/24
-
-create db
-1. Engine: mysql
-2. version: 5.7.33
-3. template: free tier
-4. name: mydb
-5. master username: admin
-6. master password: abir10101
-7. vpc: myvpc
-8. public access: no
-
-generate easy-rsa key and certificate
-certificates-manager
-download ovpn
-connect with vpn from local computer
-connect to the db instance from mysql client
-show grants for user 'admin';
-create user 'read-only-user' identified by 'passwd'
-GRANT SELECT, RELOAD, PROCESS, REFERENCES, INDEX, SHOW DATABASES, SHOW VIEW, TRIGGER ON *.* TO 'read-only-user'@'%' WITH GRANT OPTION;
+### Step 5: Spin EC2 machines
+- name: `app`
+- ami: `amazon linux`
+- instance: `t2.micro`
+- network: `myvpc`
+- subnet: `pubsn`
+- public ipv4 address: `enable`
+- user data: `sudo yum update && sudo yum install neofetch`  
+<ins> add another ec2 </ins>
+- name: `db`
+- ami: `amazon linux`
+- instance: `t2.micro`
+- network: `myvpc`
+- subnet: `prisn`
+- public ipv4 address: `enable`
+- user data: `sudo yum update && sudo yum install neofetch`
