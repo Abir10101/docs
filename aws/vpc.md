@@ -33,6 +33,8 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 <ins> add another rt </ins>
 - name: `prirt`
 - subnet association: `prisn`
+<br>
+<br>
 
 ### Step 5: Spin EC2 machines
 - name: `app`
@@ -50,3 +52,5 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 - subnet: `prisn`
 - public ipv4 address: `enable`
 - user data: `sudo yum update && sudo yum install neofetch`
+<br>
+<br>
