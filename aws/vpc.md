@@ -13,8 +13,6 @@
 <ins> add another sn </ins>
 - name: `prisn`
 - cidr: `10.0.2.0/24`
-<br>
-<br>
 
 Note: two subnets ip range must not overlap with each other.
 <br>
@@ -23,8 +21,6 @@ Note: two subnets ip range must not overlap with each other.
 ### Step 3: Create Internet Gateway
 - name: `myigw`
 - attach: `myvpc`
-<br>
-<br>
 
 Note: This will allow public subnet to have internet access (incoming and outgoing).
 <br>
