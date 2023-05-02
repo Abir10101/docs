@@ -44,3 +44,5 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 - subnet: `prisn`
 - public ipv4 address: `enable`
 - user data: `sudo yum update && sudo yum install neofetch`
+
+Note: app ec2 can install neofetch and we can ssh into the machine, but db ec2 cannot install neofetch and we cannot ssh into the machine.
