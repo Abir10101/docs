@@ -7,8 +7,8 @@
 ### Step 2: Create public and private subnets
 - vpc_id: `myvpc`
 - name: `pubsn`
-- cidr: `10.0.1.0/24`
-    #### add another sn
+- cidr: `10.0.1.0/24`  
+<ins> add another sn </ins>
 - name: `prisn`
 - cidr: `10.0.2.0/24`
 
@@ -23,8 +23,8 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 ### Step 4: Create Route Table
 - name: `pubrt`
 - add route: `0.0.0.0/0    myigw`
-- subnet association: `pubsn`
-#### add another rt
+- subnet association: `pubsn`  
+<ins> add another rt </ins>
 - name: `prirt`
 - subnet association: `prisn`
 
@@ -35,8 +35,8 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 - network: `myvpc`
 - subnet: `pubsn`
 - public ipv4 address: `enable`
-- user data: `sudo yum update && sudo yum install neofetch`
-#### add another ec2
+- user data: `sudo yum update && sudo yum install neofetch`  
+<ins> add another ec2 </ins>
 - name: `db`
 - ami: `amazon linux`
 - instance: `t2.micro`
@@ -44,5 +44,3 @@ Note: This will allow public subnet to have internet access (incoming and outgoi
 - subnet: `prisn`
 - public ipv4 address: `enable`
 - user data: `sudo yum update && sudo yum install neofetch`
-
-Note: 
