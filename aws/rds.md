@@ -29,8 +29,9 @@ Note: two subnets ip range must not overlap with each other.
 - follow: [Amazon docs](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/mutual.html)
 
 ### Step 5: Import certificates in aws
-<ins> import server crt </ins>
 - certificate manager &#8594; import certificate
+
+<ins> import server crt </ins>
 - certificate body: `cp easy-rsa/pki/issued/server.crt`
 - certificate private key: `cp easy-rsa/pki/private/server.key`
 - certificate chain: `cp easy-rsa/pki/ca.crt`
