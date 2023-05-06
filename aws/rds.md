@@ -1,32 +1,69 @@
-create private db
+# Setup a secure database like vawsum
 
-create vpc
-1. name: myvpc
-2. cidr: 10.0.0.0/16
+### Step 1: Create a vpc
+- name: `myvpc`
+- cidr: `10.0.0.0/16`
 
-create subnets
-1. vpc: myvpc
-2. name: sn1
-3. cidr: 10.0.1.0/24
-another subnet
-4. name: sn2
-5. cidr: 10.0.2.0/24
+### Step 2: Create public and private subnets
+- vpc_id: `myvpc`
+- name: `pubsn`
+- cidr: `10.0.1.0/24`  
+<ins> add another sn </ins>
+- name: `prisn`
+- cidr: `10.0.2.0/24`
 
-create db
-1. Engine: mysql
-2. version: 5.7.33
-3. template: free tier
-4. name: mydb
-5. master username: admin
-6. master password: abir10101
-7. vpc: myvpc
-8. public access: no
+Note: two subnets ip range must not overlap with each other.
 
-generate easy-rsa key and certificate
-certificates-manager
-download ovpn
-connect with vpn from local computer
-connect to the db instance from mysql client
-show grants for user 'admin';
-create user 'read-only-user' identified by 'passwd'
+### Step 3: Create rds
+- engine: `mysql`
+- version: `5.7.33`
+- template: `free tier`
+- name: `mydb`
+- master username: `admin`
+- master password: `abir10101`
+- vpc: `myvpc`
+- subnet: `sn2`
+- public access: `no`
+
+### Step 4: Generate easy-rsa key and certificate
+- follow: [Amazon docs](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/mutual.html)
+
+### Step 5: Import certificates in aws
+<ins> import server crt </ins>
+- certificate manager &#8594; import certificate
+- certificate body: `cp easy-rsa/pki/issued/server.crt`
+- certificate private key: `cp easy-rsa/pki/private/server.key`
+- certificate chain: `cp easy-rsa/pki/ca.crt`
+
+<ins> import client crt </ins>
+- certificate body: `cp easy-rsa/pki/issued/server.crt`
+- certificate private key: `cp easy-rsa/pki/private/server.key`
+- certificate chain: `cp easy-rsa/pki/ca.crt`
+
+Note: two certificate names will be server and client
+
+### Step 5: Create cpn endpoint
+- vpc &#8594; client VPN endpoint
+- Client IPv4 CIDR: `10.0.0.0/22`
+- Server certificate ARN: `server crt`
+- Server certificate ARN: `true`
+- Client certificate ARN: `client crt`
+- associations tab
+- vpc: `myvpc`
+- subnet: `sn2`
+- download vpn file (.ovpn)
+
+### Step 6: Connect with vpn from local computer
+- download and install openvpn in local computer
+- import opvpn file in openvpn and connect
+- connect ro rds db from mysql client. it works!
+- disconnect vpn. reconnect rds db. it fails!
+
+### Step 7: Create a seperate user other than admin
+- connect rds db.
+- run &#8595;
+```
+CREATE USER 'read-only-user' IDENTIFIED BY 'passwd';
 GRANT SELECT, RELOAD, PROCESS, REFERENCES, INDEX, SHOW DATABASES, SHOW VIEW, TRIGGER ON *.* TO 'read-only-user'@'%' WITH GRANT OPTION;
+```
+Note: read-only-user can connect to db with vpn and have only read only permissions;
