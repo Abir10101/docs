@@ -1,4 +1,4 @@
-# Setup a secure database like vawsum
+# Setup a secure database
 
 ### Step 1: Create a vpc
 - name: `myvpc`
