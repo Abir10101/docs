@@ -4,7 +4,6 @@
 - What is Kubernates?
 - What are the components of Kubernates?
 - What is Deployment?
-- What is basic working of deployments?
 - What are difference between Deployment vs Statefulset?
 - What are difference between Replicaset vs Deployment?
 - What are differnet types of probes and their usecases?
@@ -42,3 +41,7 @@ Some basic components of kubernates include:
 <br>
 
 ## What is Deployment?
+- Deployment is a higher-level abstraction that manages the lifecycle of a ReplicaSet.
+- A Deployment is responsible for creating and updating ReplicaSets, which in turn create and manage the Pods that run the application.
+- Deployment YAML file includes information such as the container image to use, the number of replicas to run, and any environment variables or volumes needed by the application.
+- Deployments also provide features for scaling the application up or down, rolling back to a previous version, and pausing or resuming updates.
