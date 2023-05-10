@@ -23,6 +23,7 @@
 ## What is Kubernates?
 Kubernates is a orchestartion tool for containers. <ins> Orchestration </ins>: Spining up multiple containers in a ordered way for production level deployment, i.e., horizontal and vertical scaling, Specific machines for specific workloads, Respawning unhealthy containers, etc. Containers include: Logging containers, Mailing Containers, etc.
 <br>
+<br>
 
 ## What are Components of Kubernates?
 Some basic components of kubernates include:
@@ -37,6 +38,7 @@ Some basic components of kubernates include:
 - **StorageClass**: These defines the config of the storage required. For example: type of storage, provisoner of the storage, etc.
 - **PersistedVolumes**: These are the storage outside of the cluster which is going to persist after pods deletion. These are used to persist data in database. These work by attaching with StorageClass.
 <br>
+<br>
 
 ## What is Deployment?
 - Deployment is a higher-level abstraction that manages the lifecycle of a ReplicaSet.
@@ -46,6 +48,7 @@ Some basic components of kubernates include:
 - Deployment YAML file includes information such as the container image to use, the number of replicas to run, and any environment variables or volumes needed by the application.
 
 - Deployments also provide features for scaling the application up or down, rolling back to a previous version, and pausing or resuming updates.
+<br>
 <br>
 
 ## What are difference between Deployment vs Statefulset?
@@ -59,6 +62,7 @@ StatefulSets don’t create ReplicaSet, so we cannot rollback. StatefulSet aslo 
 
 - Deployment uses PersistentVolumeClaim which is shared by all pod replicas (shared volume).  
 Statefulset used volumeClaimTemplates so that each replica pod gets a unique PVC and PV associated with it. In other words, no shared volume.
+<br>
 <br>
 
 ## What are difference between Replicaset vs Deployment?
