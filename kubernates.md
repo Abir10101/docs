@@ -21,7 +21,7 @@
 <br>
 
 ## What is Kubernates?
-Kubernates is a orchestartion tool for containers. <ins> Orchestration </ins>: Spining up multiple containers in a ordered way for production level deployment i.e. horizontal and vertical scaling, Specific machines for specific workloads, Respawning unhealthy containers, etc. Containers include: Logging containers, Mailing Containers, etc.
+Kubernates is a orchestartion tool for containers. <ins> Orchestration </ins>: Spining up multiple containers in a ordered way for production level deployment, i.e., horizontal and vertical scaling, Specific machines for specific workloads, Respawning unhealthy containers, etc. Containers include: Logging containers, Mailing Containers, etc.
 <br>
 <br>
 
@@ -42,6 +42,30 @@ Some basic components of kubernates include:
 
 ## What is Deployment?
 - Deployment is a higher-level abstraction that manages the lifecycle of a ReplicaSet.
+
 - A Deployment is responsible for creating and updating ReplicaSets, which in turn create and manage the Pods that run the application.
+
 - Deployment YAML file includes information such as the container image to use, the number of replicas to run, and any environment variables or volumes needed by the application.
+
 - Deployments also provide features for scaling the application up or down, rolling back to a previous version, and pausing or resuming updates.
+<br>
+<br>
+
+## What are difference between Deployment vs Statefulset?
+- Deployments manage stateless applications whereas Statefulset are designed to manage stateful applications.
+
+- In Deployment, Pods are interchangeable and has random unique identifier.  
+In StatefulSet, Pods are not interchangeable. Each pod has a persistent and sequential ordered identifier.
+
+- When we update a Deployment, it will create a new ReplicaSet. Then, it'll gradually move the Pods from the old ReplicaSet. If an error occurs while updating, the new ReplicaSet will never be in Ready state. The old ReplicaSet will not terminate, ensuring 100% uptime. We can also manually rollback to a previous ReplicaSet in case our new feature is not working as expected.  
+StatefulSets don’t create ReplicaSet, so we cannot rollback. StatefulSet aslo performs RollingUpdate, in a manner that, one replica pod will go down first, and then only updated pod will spin up.
+
+- Deployment uses PersistentVolumeClaim which is shared by all pod replicas (shared volume).  
+Statefulset used volumeClaimTemplates so that each replica pod gets a unique PVC and PV associated with it. In other words, no shared volume.
+<br>
+<br>
+
+## What are difference between Replicaset vs Deployment?
+- ReplicaSet is a lower-level object than Deployment. It provides a basic level of functionality for managing of replicas/pods.  
+Deployment is a higher level of abstraction that uses ReplicaSet to manage and maintain a set of replicas/pods. It has more advanced features like rolling update and rollback of pods, and is recommended for most applications.
+
