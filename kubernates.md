@@ -7,9 +7,9 @@
 - What are difference between Deployment vs Statefulset?
 - What are difference between Replicaset vs Deployment?
 - What are differnet types of probes and their usecases?
+- What are initContainers?
 - What is Taints and Tolerant?
 - What are the usecases of Labels and Selectors?
-- What is initContainers?
 - What are the types of services in k8s?
 - What is StorageClass?
 - What are the components of StorageClass?
@@ -61,11 +61,72 @@ In StatefulSet, Pods are not interchangeable. Each pod has a persistent and sequ
 StatefulSets don’t create ReplicaSet, so we cannot rollback. StatefulSet aslo performs RollingUpdate, in a manner that, one replica pod will go down first, and then only updated pod will spin up.
 
 - Deployment uses PersistentVolumeClaim which is shared by all pod replicas (shared volume).  
-Statefulset used volumeClaimTemplates so that each replica pod gets a unique PVC and PV associated with it. In other words, no shared volume.
+Statefulset uses volumeClaimTemplates so that each replica pod gets a unique PVC and PV associated with it. In other words, no shared volume.
 <br>
 <br>
 
 ## What are difference between Replicaset vs Deployment?
 - ReplicaSet is a lower-level object than Deployment. It provides a basic level of functionality for managing of replicas/pods.  
 Deployment is a higher level of abstraction that uses ReplicaSet to manage and maintain a set of replicas/pods. It has more advanced features like rolling update and rollback of pods, and is recommended for most applications.
+<br>
+<br>
+
+## What are differnet types of probes and their usecases?
+<br>
+
+### Liveness Probe:
+This probe basically answers the question 'Is the container services is running properly?'. If not then restart the container. It will poll for the lifetime of a pod. Example:
+```
+livenessProbe:
+    httpGet:
+        path: /health
+        port: 8080
+    periodSeconds: 30
+    timeoutSeconds: 5
+```
+The probe would make an HTTP request to a specific endpoint(/health) on the web server every 30 sec. If the web server doesn't respond within 5 sec, k8s will restart the container.
+
+### Readiness Probe:
+This probe basically answers the question 'Is the pod ready to serve traffic?'. If not then the pod will be removed from load balancing network. It will poll for the lifetime of a pod. Example:
+```
+readinessProbe:
+    tcpSocket:
+        port: 3306
+    periodSeconds: 10
+
+```
+check if the database server is ready to accept traffic. The probe could make a TCP connection to the database server every 10 seconds. If the connection fails, k8s will not serve any traffic to the pod and will not add it to the service's load balancer.
+
+### Startup Probe:
+Startup Probe: It basically answers the question 'Is the pod is ready?'. If not, in a defined time, then K8s will restart the pod. All other probes are disabled until the startup probe succeds. This is useful if the container takes a long time to start up. It ran once when the pod is spinning up, once succeds k8s will move to other probes. Example:
+```
+startupProbe:
+    httpGet:
+        path: /init
+        port: 8080
+    failureThreshold: 30
+    periodSeconds: 10
+```
+The probe could make an HTTP request to a specific endpoint(/init) every 10 seconds wait period for 30 times before failing. If it fails, k8s will restart the pod.
+<br>
+<br>
+
+## What are initContainers?
+- It is a type of container that runs and completes its work before the main application containers start running.
+- They are typically used for pre-initialization tasks such as setting up configuration for the main application.
+- It run in the same pod as the main application container, which allows them to share the same volumes and network namespace. Example:
+```
+initContainers:
+- name: init-db
+    image: busybox
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: DB_URL
+        valueFrom:
+        configMapKeyRef:
+            name: mysql-configmap
+            key: db_url
+    command: ['sh', '-c', "until nslookup $(DB_URL).$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for database; sleep 2; done"]
+```
+This checks for the database endpoint to be ready before initializing the main application.
 
