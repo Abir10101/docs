@@ -9,7 +9,7 @@
 - What are differnet types of probes and their usecases?
 - What are initContainers?
 - What is Taints and Tolerant?
-- What are the usecases of Labels and Selectors?
+- What are Labels and Selectors?
 - What are the types of services in k8s?
 - What is StorageClass?
 - What are the components of StorageClass?
@@ -129,4 +129,46 @@ initContainers:
     command: ['sh', '-c', "until nslookup $(DB_URL).$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for database; sleep 2; done"]
 ```
 This checks for the database endpoint to be ready before initializing the main application.
+<br>
+<br>
+
+## What is Taints and Tolerant?
+These are used to control the placement of pods on nodes.
+
+- Taints: It is a property of a Node that repels pods. It indicates that the node has certain limitations or requirements, such as need for specialized hardware.
+- Tolerations: It is a property of a Pod that allows it to be scheduled on a node with a matching taint.
+
+Example:  
+Let a k8s cluster with Nodes: node1, node2, and node3. Now mark node1 as "special" and only want to run certain pods on that node.
+```
+kubectl taint nodes node1 key=value:NoSchedule
+```
+Now let a pod to run on node1. Add a toleration to that pod as follows:
+```
+tolerations:
+- key: "key"
+  operator: "Equal"
+  value: "value"
+  effect: "NoSchedule"
+```
+<br>
+<br>
+
+## What are Labels and Selectors?
+Labels and Selectors are used to identify and select a set of objects. These are used to organize and manage k8s objects.
+
+- Labels are key-value pairs that are attached to k8s objects, used to identify and group objects that have something in common.  
+Example: Label `app=frontend` to all the pods that belong to the frontend application.
+- Selectors are used to identify a group of objects based on their labels. A Selector is a set of rules that defines a set objects to be selected.  
+Example: Selector `app=frontend` to select all the pods that belong to the frontend application.
+<br>
+<br>
+
+## What are the types of services in k8s?
+Services that can be used to expose applications running within a cluster. The commonly used types of services:
+
+- ClusterIP: This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.
+- NodePort: This type of service exposes a static port on the node in which the service resides. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.
+- LoadBalancer: This type of service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic to the service. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.
+- ExternalName: This type of service is used to provide a DNS CNAME record that points to an external service or resource outside the cluster. It does not proxy or expose the service internally within the cluster.
 
