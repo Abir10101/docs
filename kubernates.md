@@ -165,7 +165,7 @@ Example: Selector `app=frontend` to select all the pods that belong to the front
 <br>
 
 ## What are the types of services in k8s?
-Services that can be used to expose applications running within a cluster. The commonly used types of services:
+Services are used to expose applications running within a cluster. The commonly used types of services:
 
 - **ClusterIP:** This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.  
 Example:
