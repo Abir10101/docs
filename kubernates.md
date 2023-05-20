@@ -73,7 +73,6 @@ Deployment is a higher level of abstraction that uses ReplicaSet to manage and m
 <br>
 
 ## What are differnet types of probes and their usecases?
-<br>
 
 ### Liveness Probe:
 This probe basically answers the question 'Is the container services is running properly?'. If not then restart the container. It will poll for the lifetime of a pod. Example:
@@ -168,7 +167,7 @@ Example: Selector `app=frontend` to select all the pods that belong to the front
 ## What are the types of services in k8s?
 Services that can be used to expose applications running within a cluster. The commonly used types of services:
 
-- ClusterIP: This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.
+- ClusterIP: This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.  
 Example:
 ```
 apiVersion: v1
@@ -185,7 +184,7 @@ spec:
       targetPort: 8080
 ```
 
-- NodePort: This service exposes a static port on every node in the cluster. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.
+- NodePort: This service exposes a static port on every node in the cluster. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.  
 Example:
 ```
 apiVersion: v1
@@ -202,7 +201,7 @@ spec:
       targetPort: 8080
       nodePort: 30000
 ```
-- LoadBalancer: This service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic across the available pods, using various load balancing algorithms. If a pod becomes unhealthy or is removed from the cluster, the load balancer stops sending traffic to that pod until it becomes healthy again or a new pod is created. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.
+- LoadBalancer: This service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic across the available pods, using various load balancing algorithms. If a pod becomes unhealthy or is removed from the cluster, the load balancer stops sending traffic to that pod until it becomes healthy again or a new pod is created. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.  
 Example:
 ```
 apiVersion: v1
@@ -218,7 +217,7 @@ spec:
       port: 80
       targetPort: 8080
 ```
-- ExternalName: This service is used to reference an external Domain outside of the cluster. It acts as a DNS alias (DNS CNAME record), for the external service. Instead of hard-coding IP addresses or DNS names directly in application code, you can use an ExternalName service as an abstraction layer to reference to the domain name. This enables you to switch or update the external resource without modifying your application code.
+- ExternalName: This service is used to reference an external Domain outside of the cluster. It acts as a DNS alias (DNS CNAME record), for the external service. Instead of hard-coding IP addresses or DNS names directly in application code, you can use an ExternalName service as an abstraction layer to reference to the domain name. This enables you to switch or update the external resource without modifying your application code.  
 Example:
 ```
 apiVersion: v1
@@ -229,3 +228,31 @@ spec:
   type: ExternalName
   externalName: example.com
 ```
+<br>
+<br>
+
+## What is a Headless service?
+- Unlike regular services, Headless services do not have a Cluster IP assigned to them. This means that the service is not load balanced or reachable through a single IP address.
+- With a Headless service, each Pod backing the service is assigned a DNS record in the form of `<pod-name>.<service-name>.<namespace>.svc.cluster.local`. This allows other Pods within the same cluster to directly address individual Pods by their DNS names.
+- Use Cases: Headless services are commonly used in scenarios where direct communication with individual Pods is required. This is useful in StatefulSets, where each Pod may have its own unique identity or data that needs to be accessed directly.  
+Example:
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: service_name
+spec:
+  clusterIP: None # <--
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+```
+
+
+
+
+
+
