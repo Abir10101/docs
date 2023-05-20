@@ -11,6 +11,7 @@
 - What is Taints and Tolerant?
 - What are Labels and Selectors?
 - What are the types of services in k8s?
+- What is a Headless service?
 - What is StorageClass?
 - What are the components of StorageClass?
 - How persisted volumes work?
@@ -168,7 +169,7 @@ Example: Selector `app=frontend` to select all the pods that belong to the front
 Services that can be used to expose applications running within a cluster. The commonly used types of services:
 
 - ClusterIP: This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.
-- NodePort: This type of service exposes a static port on the node in which the service resides. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.
-- LoadBalancer: This type of service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic to the service. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.
+- NodePort: This service exposes a static port on every node in the cluster. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.
+- LoadBalancer: This service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic across the available pods, using various load balancing algorithms. If a pod becomes unhealthy or is removed from the cluster, the load balancer stops sending traffic to that pod until it becomes healthy again or a new pod is created. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.
 - ExternalName: This type of service is used to provide a DNS CNAME record that points to an external service or resource outside the cluster. It does not proxy or expose the service internally within the cluster.
 
