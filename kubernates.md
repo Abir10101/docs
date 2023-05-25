@@ -32,11 +32,11 @@ Some basic components of kubernates include:
 - **Nodes**: These are physical or virtual machines in which the kubernates is installed and added to the pool for spinning up pods.
 - **Deployments**: These are manifests for the stateless application written in yaml file. This is used for packaging the application, scaling application, creating replicas containers, health check containers.
 - **StatefulSet**: These are manifests for stateful applications such as databases. We generally don't use statefulsets for deploying databases as we have to create master slave architecture for fetching and updating data.
-- **ConfigMap**: These are manifests for applying config variables that can be used in other manifests file. Example: database_host, database_port, etc. to be used in deployment manifests.
+- **ConfigMap**: These are manifests for applying config variables that can be used in other manifests file. Example: config vars like db_host, db_port, etc. to be used in deployment manifests.
 - **Secrets**: These are manifests for applying variables that are encoded (base64). For example: database_password, database_username for using in database pods manifests.
 - **Services**: These are gateways to enable network connection in and out of the pods. These select pods to attach to by using selectors of the pods.
 - **NameSpace**: These are used to isolate group of resources of application within a cluster. For example: Application pods is deployed in a namespace(ns1) and monitering tools for the pods is deployed in another namespace(ns2).
-- **StorageClass**: These defines the config of the storage required. For example: type of storage, provisoner of the storage, etc.
+- **StorageClass**: These defines the configuration for the storage required. For example: type of storage, provisoner of the storage, etc.
 - **PersistedVolumes**: These are the storage outside of the cluster which is going to persist after pods deletion. These are used to persist data in database. These work by attaching with StorageClass.
 <br>
 <br>
@@ -59,7 +59,7 @@ Some basic components of kubernates include:
 In StatefulSet, Pods are not interchangeable. Each pod has a persistent and sequential ordered identifier.
 
 - When we update a Deployment, it will create a new ReplicaSet. Then, it'll gradually move the Pods from the old ReplicaSet. If an error occurs while updating, the new ReplicaSet will never be in Ready state. The old ReplicaSet will not terminate, ensuring 100% uptime. We can also manually rollback to a previous ReplicaSet in case our new feature is not working as expected.  
-StatefulSets don’t create ReplicaSet, so we cannot rollback. StatefulSet aslo performs RollingUpdate, in a manner that, one replica pod will go down first, and then only updated pod will spin up.
+StatefulSets don’t create ReplicaSet, so we cannot rollback. StatefulSet also performs RollingUpdate, in a manner that, one replica pod will go down first, and then only updated pod will spin up.
 
 - Deployment uses PersistentVolumeClaim which is shared by all pod replicas (shared volume).  
 Statefulset uses volumeClaimTemplates so that each replica pod gets a unique PVC and PV associated with it. In other words, no shared volume.
@@ -68,7 +68,7 @@ Statefulset uses volumeClaimTemplates so that each replica pod gets a unique PVC
 
 ## What are difference between Replicaset vs Deployment?
 - ReplicaSet is a lower-level object than Deployment. It provides a basic level of functionality for managing of replicas/pods.  
-Deployment is a higher level of abstraction that uses ReplicaSet to manage and maintain a set of replicas/pods. It has more advanced features like rolling update and rollback of pods, and is recommended for most applications.
+Deployment is a higher level abstraction that uses ReplicaSet to manage and maintain a set of replicas/pods. It has more advanced features like rolling update and rollback of pods, and is recommended for most applications.
 <br>
 <br>
 
@@ -98,7 +98,7 @@ readinessProbe:
 check if the database server is ready to accept traffic. The probe could make a TCP connection to the database server every 10 seconds. If the connection fails, k8s will not serve any traffic to the pod and will not add it to the service's load balancer.
 
 ### Startup Probe:
-Startup Probe: It basically answers the question 'Is the pod is ready?'. If not, in a defined time, then K8s will restart the pod. All other probes are disabled until the startup probe succeds. This is useful if the container takes a long time to start up. It ran once when the pod is spinning up, once succeds k8s will move to other probes. Example:
+Startup Probe: It basically answers the question 'Is the pod is ready?'. If not, in a defined time, then K8s will restart the pod. All other probes are disabled until the startup probe succeds. This is useful if the container takes a long time to start up. It run once when the pod is spinning up, once succeds k8s will move to other probes. Example:
 ```
 startupProbe:
     httpGet:
@@ -135,8 +135,8 @@ This checks for the database endpoint to be ready before initializing the main a
 ## What is Taints and Tolerant?
 These are used to control the placement of pods on nodes.
 
-- Taints: It is a property of a Node that repels pods. It indicates that the node has certain limitations or requirements, such as need for specialized hardware.
-- Tolerations: It is a property of a Pod that allows it to be scheduled on a node with a matching taint.
+- **Taints:** It is a property of a Node that repels pods. It indicates that the node has certain limitations or requirements, such as need for specialized hardware.
+- **Tolerations:** It is a property of a Pod that allows it to be scheduled on a node with a matching taint.
 
 Example:  
 Let a k8s cluster with Nodes: node1, node2, and node3. Now mark node1 as "special" and only want to run certain pods on that node.
@@ -157,17 +157,17 @@ tolerations:
 ## What are Labels and Selectors?
 Labels and Selectors are used to identify and select a set of objects. These are used to organize and manage k8s objects.
 
-- Labels are key-value pairs that are attached to k8s objects, used to identify and group objects that have something in common.  
+- **Labels** are key-value pairs that are attached to k8s objects, used to identify and group objects that have something in common.  
 Example: Label `app=frontend` to all the pods that belong to the frontend application.
-- Selectors are used to identify a group of objects based on their labels. A Selector is a set of rules that defines a set objects to be selected.  
+- **Selectors** are used to identify a group of objects based on their labels. A Selector is a set of rules that defines a set objects to be selected.  
 Example: Selector `app=frontend` to select all the pods that belong to the frontend application.
 <br>
 <br>
 
 ## What are the types of services in k8s?
-Services that can be used to expose applications running within a cluster. The commonly used types of services:
+Services are used to expose applications running within a cluster. The commonly used types of services:
 
-- ClusterIP: This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.  
+- **ClusterIP:** This is the default service type. It exposes the service on a cluster-internal IP address. It allows communication between different services within the cluster but does not expose the service externally.  
 Example:
 ```
 apiVersion: v1
@@ -184,7 +184,7 @@ spec:
       targetPort: 8080
 ```
 
-- NodePort: This service exposes a static port on every node in the cluster. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.  
+- **NodePort:** This service exposes a static port on every node in the cluster. It creates a mapping between a port on the node's IP address and the port of the service. This allows external access to the service using the node's IP address and the static port.  
 Example:
 ```
 apiVersion: v1
@@ -201,7 +201,7 @@ spec:
       targetPort: 8080
       nodePort: 30000
 ```
-- LoadBalancer: This service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic across the available pods, using various load balancing algorithms. If a pod becomes unhealthy or is removed from the cluster, the load balancer stops sending traffic to that pod until it becomes healthy again or a new pod is created. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.  
+- **LoadBalancer:** This service provisions an external load balancer, such as a cloud provider's load balancer, to distribute traffic across the available pods, using various load balancing algorithms. If a pod becomes unhealthy or is removed from the cluster, the load balancer stops sending traffic to that pod until it becomes healthy again or a new pod is created. It automatically assigns an external IP address to the service, allowing it to be accessible from outside the cluster.  
 Example:
 ```
 apiVersion: v1
@@ -217,7 +217,7 @@ spec:
       port: 80
       targetPort: 8080
 ```
-- ExternalName: This service is used to reference an external Domain outside of the cluster. It acts as a DNS alias (DNS CNAME record), for the external service. Instead of hard-coding IP addresses or DNS names directly in application code, you can use an ExternalName service as an abstraction layer to reference to the domain name. This enables you to switch or update the external resource without modifying your application code.  
+- **ExternalName:** This service is used to reference an external Domain outside of the cluster. It acts as a DNS alias (DNS CNAME record), for the external service. Instead of hard-coding IP addresses or DNS names directly in application code, you can use an ExternalName service as an abstraction layer to reference to the domain name. This enables you to switch or update the external resource without modifying your application code.  
 Example:
 ```
 apiVersion: v1
