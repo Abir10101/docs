@@ -250,6 +250,135 @@ spec:
       port: 80
       targetPort: 8080
 ```
+<br>
+<br>
+
+## What is StorageClass?
+- A StorageClass basically answers the question "What type of storage is required?".
+- It defines the provisioner and parameters for dynamic provisioning of storage volumes, i.e, when a PVC is created without specifying a specific storage volume, the StorageClass defines how and where the volume should be provisioned.
+- Dynamic provisioning:
+  - ***Create a StorageClass***: named fast uses the AWS EBS provisioner and parameter type of gp2 for General Purpose SSD storage.
+
+    ```
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
+    metadata:
+      name: fast
+    provisioner: kubernetes.io/aws-ebs
+    parameters:
+      type: gp2
+    ```
+  - ***Create a PVC***: without specifying a storage volume. Instead, reference the StorageClass in the PVC. It requests a storage size of 10GB and has an access mode of ReadWriteOnce, indicating that it can be mounted by a single node at a time.
+
+    ```
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: my-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: fast
+      resources:
+        requests:
+          storage: 10Gi
+    ```
+- Static provisioning:
+  - ***Create a PV:***: with a capacity of 10GB, an access mode of ReadWriteOnce and a hostPath volume type, which represents a directory on the host machine's filesystem.
+
+    ```
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: my-pv
+    spec:
+      capacity:
+        storage: 10Gi
+      accessModes:
+        - ReadWriteOnce
+      hostPath:
+        path: /data/my-volume
+    ```
+  - ***Create a PVC***: requests a storage size of 10GB, an access mode of ReadWriteOnce and references the PV my-pv.
+
+    ```
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: my-pvc
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      volumeName: my-pv
+    ```
+<br>
+<br>
+
+## Explain the components of StorageClass?
+Manifest file example:
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer
+```
+- ***provisioner:*** It answer the question "To whom to ask for the storage volume?".
+
+- ***parameters.type:*** It defines the type of storage required. Here it is general purpose ssd from aws ebs.
+
+- ***reclaimPolicy:*** It answers the question "what to do after deletion of PVC?". In this case, `Retain` will retain the data after the PVC deletion.
+
+- ***allowVolumeExpansion:*** It is a boolean value which answers "Can the volume be expanded dynamically after the storage volume is created?".
+
+- ***volumeBindingMode:*** It answers "How to bind the volume to pods?". In this case, `WaitForFirstConsumer` mode indicates that the PV binding should be delayed until the first Pod using the PV is created.
+<br>
+<br>
+
+## How persisted volumes work?
+PersistentVolumes (PVs) provide a persistent storage solution for applications running in a k8s cluster.
+- A PVC is created to request a specific type and size of storage. The PVC specifies its desired capacity, access modes, and other requirements.
+- K8s matches the PVC to an available PV that satisfies its requirements. The PVC can only be bound to a single PV (unless using ReadWriteMany access mode), and the PV can be claimed by only one PVC at a time.
+- Once the PVC is bound to a PV, k8s provisions the volume and mounts it to the application's Pod. The application can then access the persistent volume as a file system within the Pod.
+- PVs and PVCs have their own lifecycle management. PVs can be manually deleted, while PVCs are typically deleted when no longer needed. When a PVC is deleted, the PV it was bound to becomes available for other PVCs.
+- This allow applications to access and retain data across Pod restarts, node failures, and other events, ensuring data persistence and reliability.
+<br>
+<br>
+
+## How to store Docker private registry credentials to pull images ?
+- Create a k8s Secret that holds the Docker registry credentials. The Secret should be of type "docker-registry" and include the server URL, username, and password for the private registry.
+  ```
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: my-registry-secret
+    namespace: <your-namespace>
+  type: kubernetes.io/dockerconfigjson
+  data:
+    .dockerconfigjson: <base64-encoded-credentials>
+  ```
+
+- To create the `<base64-encoded-credentials>` value, create a JSON file (e.g., config.json) that contains the following:
+  ```
+  {
+    "auths": {
+      "your-registry-url": {
+        "auth": "base64-encoded {username:password}"
+      }
+    }
+  }
+  ```
+  Encode the config.json file using the base64 command `base64 -w 0 config.json`
+
+- Reference the Secret in manifest where docker images needs to pull from the registry. Placement: `spec.template.spec.imagePullSecrets`
 
 
 
