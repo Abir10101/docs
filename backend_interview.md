@@ -1,6 +1,6 @@
 # Backend Developer Interview Questions
 
-## In MVC framework, what is the purpose of migrations?
+### In MVC framework, what is the purpose of migrations?
 - Migrations are used to define and modify the structure of database tables.
 - Migrations enable version control for the database schema by storing the migration files in the project and version control using git.
 - Migrations work hand-in-hand with Laravel's Object-Relational Mapping (ORM) system, such as Eloquent. When you define a migration for a table, it automatically generate the corresponding model.
