@@ -61,6 +61,13 @@ def multiply(a, b):
     return a * b
 ```
 Whenever the multiply function is called, the logging decorator will be invoked. It will log a message before the function call and another message after the function is executed.
+<br>
+<br>
+
+## What is Middleware in a frameworks (Django/Laravel)?
+- Middleware functions are used for tasks such as authentication, authorization, request/response manipulation, logging, error handling, etc. They allow to perform certain checks or modifications on the request before they reach the controller function.
+- For example, in case of user authentication, a middleware function can be used to check if a user is logged in or has the necessary permissions to access a particular route. If the conditions are not met, the middleware can redirect the user to a login page or return an error response without reaching the controller function.
+
 
 
 
