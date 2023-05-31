@@ -103,4 +103,8 @@ print(user.name)
 - Now, when we call the get_user method of the UserService, it internally uses the injected UserRepository to fetch the user data. The retrieved user object is then printed to the console.
 <br>
 
+### What is the difference between synchronous and asynchronous programming?
+- In ***synchronous programming***, the program executes in a sequential manner. The program typically waits for each operation to finish before proceeding to the next one.
+- In ***asynchronous programming***, the program doesn't have to wait for each operation to finish before moving to the next one. Instead, it can initiate an operation and continue executing other tasks in parallel without blocking and handle the result of the operation once it's available. Tasks are often assigned to separate threads which allows for parallel execution, improving performance and responsiveness.
+<br>
 
